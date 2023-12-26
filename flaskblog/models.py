@@ -1,5 +1,5 @@
 from datetime import datetime
-from flaskblog import db, login_manager, app
+from flaskblog import db, login_manager
 from flask_login import UserMixin
 
 
@@ -29,8 +29,3 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
-
-
-with app.app_context():
-    db.create_all()
-
