@@ -1,5 +1,6 @@
-from datetime import datetime
-from flaskblog import db, login_manager
+import datetime
+import jwt
+from flaskblog import db, login_manager, app
 from flask_login import UserMixin
 
 
@@ -16,6 +17,24 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
 
+    def get_reset_token(self, expires_sec=1800):
+        payload = {'user_id': self.id}
+        payload = {**payload, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=expires_sec)}
+        return jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_reset_token(token):
+        try:
+            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
+            return payload
+        except jwt.ExpiredSignatureError:
+            print( "Token expired. Please log in again.")
+            return None
+        except jwt.InvalidTokenError:
+            print( "Invalid token. Please log in again.")
+            return None
+        return User.query.get(user_id)
+
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
@@ -23,7 +42,7 @@ class User(db.Model, UserMixin):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
