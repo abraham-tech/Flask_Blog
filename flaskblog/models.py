@@ -1,6 +1,7 @@
 import datetime
 import jwt
-from flaskblog import db, login_manager, app
+from flaskblog import db, login_manager
+from flask import current_app
 from flask_login import UserMixin
 
 
@@ -20,12 +21,12 @@ class User(db.Model, UserMixin):
     def get_reset_token(self, expires_sec=1800):
         payload = {'user_id': self.id}
         payload = {**payload, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=expires_sec)}
-        return jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+        return jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
 
     @staticmethod
     def verify_reset_token(token):
         try:
-            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')
             return payload
         except jwt.ExpiredSignatureError:
             print( "Token expired. Please log in again.")
