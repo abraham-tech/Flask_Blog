@@ -12,15 +12,35 @@ This is a Flask blog application which includes features such as user registrati
 
 ## Installation
 
-Please ensure that all dependencies are installed. This application requires the following Python packages:
-- flask
-- flask_login
-- flask_mail
-- flask_bootstrap (If used)
-- ... (Any other package dependencies specific to this project)
+- First, clone the repository using Git: 
+- Create a Python virtual environment for the project:
 
-You can install these packages using pip:
+    ```bash
+    cd your-new-directory
+    python3 -m venv env
+    ```
+  
+- Activate the environment: 
 
+    For macOS and Linux:
+
+    ```bash
+    source env/bin/activate
+    ```
+- Install the required packages using pip:
+
+    ```bash
+    pip install -r requirments.txt
+    ```
+
+## Running the Application
+
+- You can run the application with the following command: 
+
+    ```bash
+    python app.py
+    ```
+  
 ## Usage
 
 The blog application can be started by running `app.py`.
